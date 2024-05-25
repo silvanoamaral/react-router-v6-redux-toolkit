@@ -1,20 +1,33 @@
 import React from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { Link, Route, Routes } from "react-router-dom"
+import { HistoryRouter } from "redux-first-history/rr6"
 
-import App from "./App"
-import { store } from "./app/store"
+import { store, createReduxHistory } from "./redux"
+
 import "./index.css"
-import ErrorPage from "./page"
+import { ErrorPage, PedidoPage, SobrePage } from "./page"
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <ErrorPage />,
-  },
-])
+function Navbar() {
+  return (
+    <header>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/pedidos">pedidos</Link>
+          </li>
+          <li>
+            <Link to="/sobre">sobre</Link>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  )
+}
 
 const container = document.getElementById("root")
 
@@ -23,9 +36,17 @@ if (container) {
 
   root.render(
     <React.StrictMode>
-      <Provider store={store}>
-        <RouterProvider router={router} />
-      </Provider>
+      <HistoryRouter history={createReduxHistory(store)}>
+        <Navbar />
+
+        <Provider store={store}>
+          <Routes>
+            <Route path="/pedidos" element={<PedidoPage />} />
+            <Route path="/sobre" element={<SobrePage />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </Provider>
+      </HistoryRouter>
     </React.StrictMode>,
   )
 } else {
